@@ -10,7 +10,6 @@
 
 use clap::Parser;
 
-
 #[derive(Debug, Parser)]
 struct Cli {
     pattern: String,
