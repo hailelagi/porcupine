@@ -8,6 +8,17 @@
 // todo: avl, red-black tree, B-Tree practice
 // todo: explore Clap api
 
+use clap::Parser;
+
+
+#[derive(Debug, Parser)]
+struct Cli {
+    pattern: String,
+    path: std::path::PathBuf
+}
+
 fn main() {
-    println!("Hello, world!");
+    let args = Cli::parse();
+
+    println!("{:?}", args);
 }
