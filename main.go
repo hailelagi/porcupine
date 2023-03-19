@@ -3,31 +3,21 @@ package main
 import (
 	"fmt"
 	"sync"
+
+	"porcupine-go/porcupine"
 )
 
-type LockingMap struct {
-	sync.RWMutex
-	fields map[string]int
-}
-
-func Handle(l *LockingMap, k string, v int) {
-	l.RWMutex.Lock()
-	defer l.Unlock()
-
-	l.fields[k] = v
-}
-
 func main() {
-	ref := &LockingMap{
+	ref := &porcupine.LockingMap{
 		RWMutex: sync.RWMutex{},
 		fields:  make(map[string]int),
 	}
 
-	go Handle(ref, "test", 1)
-	go Handle(ref, "test-x", 2)
-	go Handle(ref, "test-y", 3)
-	go Handle(ref, "test-z", 4)
-	go Handle(ref, "test", 69)
+	go porcupine.Handle(ref, "test", 1)
+	go porcupine.Handle(ref, "test-x", 2)
+	go porcupine.Handle(ref, "test-y", 3)
+	go porcupine.Handle(ref, "test-z", 4)
+	go porcupine.Handle(ref, "test", 69)
 
 	fmt.Println(ref.fields)
 }
