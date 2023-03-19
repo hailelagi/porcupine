@@ -10,36 +10,24 @@ type LockingMap struct {
 	fields map[string]int
 }
 
-type Resource struct {
-	current *LockingMap
-}
+func Handle(l *LockingMap, k string, v int) {
+	l.RWMutex.Lock()
+	defer l.Unlock()
 
-func handle(l *Resource, k string, v int) {
-	// l.current.RWMutex.RLock()
-	// mutate stuff
-	// this can and does panic due to "test"=1 and "test"= 69
-	// accessing the same memory space must use a "write" lock
-
-	l.current.RWMutex.Lock()
-	l.current.fields[k] = v
-
-	defer l.current.Unlock()
+	l.fields[k] = v
 }
 
 func main() {
-	shareMe := &LockingMap{
+	ref := &LockingMap{
 		RWMutex: sync.RWMutex{},
 		fields:  make(map[string]int),
 	}
 
-	x := Resource{current: shareMe}
-	ref := &x
+	go Handle(ref, "test", 1)
+	go Handle(ref, "test-x", 2)
+	go Handle(ref, "test-y", 3)
+	go Handle(ref, "test-z", 4)
+	go Handle(ref, "test", 69)
 
-	go handle(ref, "test", 1)
-	go handle(ref, "test-x", 2)
-	go handle(ref, "test-y", 3)
-	go handle(ref, "test-z", 4)
-	go handle(ref, "test", 69)
-
-	fmt.Println(shareMe.fields)
+	fmt.Println(ref.fields)
 }
