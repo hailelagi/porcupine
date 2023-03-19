@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"sync"
 
-	"porcupine-go/porcupine"
+	"github.com/hailelagi/porcupine-go/porcupine"
 )
 
 func main() {
 	ref := &porcupine.LockingMap{
 		RWMutex: sync.RWMutex{},
-		fields:  make(map[string]int),
+		Fields:  make(map[string]int),
 	}
 
 	go porcupine.Handle(ref, "test", 1)
@@ -19,5 +19,5 @@ func main() {
 	go porcupine.Handle(ref, "test-z", 4)
 	go porcupine.Handle(ref, "test", 69)
 
-	fmt.Println(ref.fields)
+	fmt.Println(ref.Fields)
 }

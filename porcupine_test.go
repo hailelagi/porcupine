@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"porcupine-go/porcupine"
 	"sync"
 	"testing"
+
+	"github.com/hailelagi/porcupine-go/porcupine"
 )
 
 func TestCounter(t *testing.T) {
 
 	t.Run("increment", func(t *testing.T) {
-		testMap := &porcupine.LockingMap{RWMutex: sync.RWMutex{}, fields: make(map[string]int)}
+		testMap := &porcupine.LockingMap{RWMutex: sync.RWMutex{}, Fields: make(map[string]int)}
 
 		porcupine.Handle(testMap, "test", 1)
 		porcupine.Handle(testMap, "test-x", 2)
@@ -21,7 +22,7 @@ func TestCounter(t *testing.T) {
 
 	t.Run("it runs safely concurrently", func(t *testing.T) {
 		wantedCount := 1000
-		testMap := &porcupine.LockingMap{RWMutex: sync.RWMutex{}, fields: make(map[string]int)}
+		testMap := &porcupine.LockingMap{RWMutex: sync.RWMutex{}, Fields: make(map[string]int)}
 
 		var wg sync.WaitGroup
 		wg.Add(wantedCount)
@@ -42,7 +43,7 @@ func TestCounter(t *testing.T) {
 
 func assert(t testing.TB, result *porcupine.LockingMap, key string, want int) {
 	t.Helper()
-	if result.fields[key] != want {
+	if result.Fields[key] != want {
 		t.Fail()
 	}
 }
