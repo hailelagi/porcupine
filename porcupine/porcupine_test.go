@@ -7,14 +7,17 @@ import (
 )
 
 func TestCounter(t *testing.T) {
+
 	t.Run("increment", func(t *testing.T) {
 		testMap := &LockingMap{RWMutex: sync.RWMutex{}, Fields: make(map[string]int)}
 
-		Handle(testMap, "test", 1)
-		Handle(testMap, "test-x", 2)
-		Handle(testMap, "test-y", 3)
+		testMap.Put("test", 1)
+		testMap.Put("test-x", 2)
+		testMap.Put("test-y", 3)
 
-		assert(t, testMap, "test-x", 5)
+		assert(t, testMap, "test", 1)
+		assert(t, testMap, "test-x", 2)
+		assert(t, testMap, "test-y", 3)
 	})
 
 	t.Run("it runs safely concurrently", func(t *testing.T) {
@@ -28,7 +31,7 @@ func TestCounter(t *testing.T) {
 			go func(i int) {
 				k := fmt.Sprintf("test-%d", i)
 
-				Handle(testMap, k, i)
+				testMap.Put(k, i)
 				wg.Done()
 			}(i)
 		}

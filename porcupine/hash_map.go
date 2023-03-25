@@ -7,9 +7,21 @@ type LockingMap struct {
 	Fields map[string]int
 }
 
-func Handle(l *LockingMap, k string, v int) {
+func (l *LockingMap) Get(key string) int {
+	return 0
+}
+
+func (l *LockingMap) Put(key string, value int) int {
 	l.RWMutex.Lock()
 	defer l.Unlock()
 
-	l.Fields[k] = v
+	l.Fields[key] = value
+	return value
+}
+
+func (l *LockingMap) In(key string) bool {
+	return false
+}
+
+func (l *LockingMap) Del(key string) {
 }
