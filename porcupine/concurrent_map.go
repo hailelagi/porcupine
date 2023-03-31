@@ -31,8 +31,8 @@ func (c ConcurrentMap) In(key string) bool {
 	return found
 }
 
-func (c ConcurrentMap) Del(key string) bool {
-	_, found := c.Fields.LoadAndDelete(key)
+// func (c ConcurrentMap) Del(key string) bool {
+// 	_, found := c.Fields.LoadAndDelete(key)
 
-	return found
-}
+// 	return found
+// }
