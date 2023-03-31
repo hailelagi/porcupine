@@ -1,3 +1,5 @@
 # ignore binary
 /main
-porcupine-go
+/porcupine
+/porcupine-go
+
