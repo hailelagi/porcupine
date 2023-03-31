@@ -1,16 +1,15 @@
 package porcupine
 
 import (
-	"sync"
+	"github.com/lrita/cmap"
 )
 
+// Cmap is a drop-ish in replacement for sync.Map
 type ConcurrentMap struct {
-	Fields *sync.Map
+	Fields *cmap.Cmap
 }
 
-// TODO: cleanup
-
-func (c *ConcurrentMap) Get(key string) int {
+func (c ConcurrentMap) Get(key string) int {
 	value, found := c.Fields.Load(key)
 
 	if found && value != nil {
@@ -20,19 +19,19 @@ func (c *ConcurrentMap) Get(key string) int {
 	}
 }
 
-func (c *ConcurrentMap) Put(key string, value int) int {
+func (c ConcurrentMap) Put(key string, value int) int {
 	existing, _ := c.Fields.LoadOrStore(key, value)
 
 	return existing.(int)
 }
 
-func (c *ConcurrentMap) In(key string) bool {
+func (c ConcurrentMap) In(key string) bool {
 	_, found := c.Fields.Load(key)
 
 	return found
 }
 
-func (c *ConcurrentMap) Del(key string) bool {
+func (c ConcurrentMap) Del(key string) bool {
 	_, found := c.Fields.LoadAndDelete(key)
 
 	return found
