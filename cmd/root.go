@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -13,14 +10,18 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "porcupine --help",
 	Short: "A key-value store cli app.",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Long: `
+\\\\\\\\\\\\\\\
+\\ PORCUPINE \\
+\\\\\\\\\\\\\\\
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
+A key-value store supporting several data structures with different trade-offs. 
+Porcupine ships with an optional http server and a cli client.
+
+To start the http server, run 'porcupine server'.
+Or interact with the cli directly 'porcupine --help'
+`,
+	// todo select default data structe
 	// Run: func(cmd *cobra.Command, args []string) { },
 }
 

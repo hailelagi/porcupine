@@ -9,27 +9,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// rmCmd represents the rm command
-var rmCmd = &cobra.Command{
-	Use:   "rm",
-	Short: "remove an entry by key",
-	Long:  `Remove the value associated with the key, performance will vary depending on the data structure.`,
+// serverCmd represents the server command
+var serverCmd = &cobra.Command{
+	Use:   "server",
+	Short: "Starts a server at localhost:8080",
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		fmt.Println("rm called")
+		fmt.Println("starting server at https://localhost:8080")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(rmCmd)
+	rootCmd.AddCommand(serverCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// rmCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// serverCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// rmCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// serverCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

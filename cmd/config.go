@@ -1,27 +1,31 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
 
+	"github.com/hailelagi/porcupine-go/porcupine"
 	"github.com/spf13/cobra"
 )
 
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "configure the store",
+	Long: `select the data structure for the store, experimenting with tradeoffs. 
+	
+	If you use the http server, you can configure the store by passing the config as a query param.
+	Example: http://localhost:8080/?config=hashmap where it's stored in-memory of the main go routine.
+	
+	Whereas if you use the cli, config options are persisted in a .txt file in the root directory.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("config called")
+
+		porcupine := porcupine.NewPorcupine(args[0])
+		// todo write config to file
+		fmt.Println("config init called")
+		fmt.Println(porcupine)
 	},
 }
 
