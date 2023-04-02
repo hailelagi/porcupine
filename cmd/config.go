@@ -21,11 +21,15 @@ var configCmd = &cobra.Command{
 	
 	Whereas if you use the cli, config options are persisted in a .txt file in the root directory.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		var store *porcupine.Porcupine
 
-		porcupine := porcupine.NewPorcupine(args[0])
-		// todo write config to file
-		fmt.Println("config init called")
-		fmt.Println(porcupine)
+		if len(args) == 0 {
+			store = porcupine.NewPorcupine("hashmap")
+		} else {
+			store = porcupine.NewPorcupine(args[0])
+		}
+
+		fmt.Printf("setup data store as %s", store.Name)
 	},
 }
 

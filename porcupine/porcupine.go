@@ -1,8 +1,9 @@
 package porcupine
 
+// Store is an interface for a key-value store.
 type Store interface {
 	// todo: make generic later
-	// Write(string, interface{}) interface{} ?
+	// Write(string, interface{}) interface{}
 	Put(string, int) int
 	Del(string)
 
@@ -11,13 +12,15 @@ type Store interface {
 	In(string) bool
 }
 
-// Provides global access to a store and analytics
+// Porcupine is a global in-memory read/write store.
 type Porcupine struct {
-	store        Store
+	Store        Store
+	Name         string
 	env          string
 	processCount int
 }
 
+// New `Porcupine` instance.
 func NewPorcupine(storeConfig string) *Porcupine {
 	var store Store
 
@@ -29,5 +32,5 @@ func NewPorcupine(storeConfig string) *Porcupine {
 		store = &LockingMap{}
 	}
 
-	return &Porcupine{store: store, env: "dev", processCount: 1}
+	return &Porcupine{Store: store, env: "dev", Name: "hashMap", processCount: 1}
 }

@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/hailelagi/porcupine-go/porcupine"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +17,8 @@ var serverCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("starting server at https://localhost:8080")
+		// todo: expose routes or redirect to '/' with query params
+		porcupine.Serve()
 	},
 }
 

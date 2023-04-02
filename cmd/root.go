@@ -16,7 +16,7 @@ var rootCmd = &cobra.Command{
 \\\\\\\\\\\\\\\
 
 A key-value store supporting several data structures with different trade-offs. 
-Porcupine ships with an optional http server and a cli client.
+Porcupine ships with a http server and a cli client.
 
 To start the http server, run 'porcupine server'.
 Or interact with the cli directly 'porcupine --help'
