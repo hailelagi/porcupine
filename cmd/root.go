@@ -15,11 +15,12 @@ var rootCmd = &cobra.Command{
 \\ PORCUPINE \\
 \\\\\\\\\\\\\\\
 
-A key-value store supporting several data structures with different trade-offs. 
+A key-value store supporting various in-memory key-value data structures with different trade-offs. 
 Porcupine ships with a http server and a cli client.
 
 To start the http server, run 'porcupine server'.
-Or interact with the cli directly 'porcupine --help'
+You can then issue commands to the runtime in a different terminal session. 
+View commands with 'porcupine --help'.
 `,
 	// todo select default data structe
 	// Run: func(cmd *cobra.Command, args []string) { },
