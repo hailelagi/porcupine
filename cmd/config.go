@@ -19,7 +19,6 @@ var configCmd = &cobra.Command{
 		var stdout string
 
 		// todo:
-		// scan for a server process listening on port :8080
 
 		if len(args) == 0 {
 			store = porcupine.NewPorcupine("hashmap")
