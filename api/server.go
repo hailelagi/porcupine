@@ -1,4 +1,4 @@
-package porcupine
+package api
 
 import (
 	"context"

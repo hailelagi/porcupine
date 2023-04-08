@@ -8,7 +8,13 @@ type LockingMap struct {
 }
 
 func (l *LockingMap) Get(key string) int {
-	return l.Fields[key]
+	value, found := l.Fields[key]
+
+	if !found {
+		return 0
+	}
+
+	return value
 }
 
 func (l *LockingMap) Put(key string, value int) int {
@@ -20,18 +26,19 @@ func (l *LockingMap) Put(key string, value int) int {
 }
 
 func (l *LockingMap) In(key string) bool {
-	keys := make([]string, 0, len(l.Fields))
-	for k := range l.Fields {
-		keys = append(keys, k)
-	}
+	// keys := make([]string, 0, len(l.Fields))
+	// for k := range l.Fields {
+	// 	keys = append(keys, k)
+	// }
 
-	for _, k := range keys {
-		if k == key {
-			return true
-		}
-	}
+	// for _, k := range keys {
+	// 	if k == key {
+	// 		return true
+	// 	}
+	// }
+	_, found := l.Fields[key]
 
-	return false
+	return found
 }
 
 func (l *LockingMap) Del(key string) {
