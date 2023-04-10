@@ -9,7 +9,7 @@ import (
 func TestCounter(t *testing.T) {
 
 	t.Run("increment", func(t *testing.T) {
-		testMap := &LockingMap{RWMutex: sync.RWMutex{}, Fields: make(map[string]int)}
+		testMap := &LockingMap[string, int]{RWMutex: sync.RWMutex{}, Fields: make(map[string]int)}
 
 		testMap.Put("test", 1)
 		testMap.Put("test-x", 2)
@@ -22,7 +22,7 @@ func TestCounter(t *testing.T) {
 
 	t.Run("it runs safely concurrently", func(t *testing.T) {
 		wantedCount := 1000
-		testMap := &LockingMap{RWMutex: sync.RWMutex{}, Fields: make(map[string]int)}
+		testMap := &LockingMap[string, int]{RWMutex: sync.RWMutex{}, Fields: make(map[string]int)}
 
 		var wg sync.WaitGroup
 		wg.Add(wantedCount)
@@ -41,7 +41,7 @@ func TestCounter(t *testing.T) {
 	})
 }
 
-func assert(t testing.TB, result *LockingMap, key string, want int) {
+func assert(t testing.TB, result *LockingMap[string, int], key string, want int) {
 	t.Helper()
 	if result.Fields[key] != want {
 		t.Fail()

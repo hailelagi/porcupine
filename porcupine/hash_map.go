@@ -1,31 +1,36 @@
 package porcupine
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
 
-type LockingMap struct {
+type LockingMap[K string, V any] struct {
 	sync.RWMutex
-	Fields map[string]int
+	Fields map[K]V
 }
 
-func (l *LockingMap) Get(key string) int {
+func (l *LockingMap[string, any]) Get(key string) (any, error) {
+	l.RLock()
+	defer l.RUnlock()
+
 	value, found := l.Fields[key]
 
 	if !found {
-		return 0
+		return value, errors.New("not found")
 	}
 
-	return value
+	return value, nil
 }
 
-func (l *LockingMap) Put(key string, value int) int {
+func (l *LockingMap[string, any]) Put(key string, value any) {
 	l.RWMutex.Lock()
 	defer l.Unlock()
 
 	l.Fields[key] = value
-	return value
 }
 
-func (l *LockingMap) In(key string) bool {
+func (l *LockingMap[string, any]) In(key string) bool {
 	// keys := make([]string, 0, len(l.Fields))
 	// for k := range l.Fields {
 	// 	keys = append(keys, k)
@@ -41,7 +46,7 @@ func (l *LockingMap) In(key string) bool {
 	return found
 }
 
-func (l *LockingMap) Del(key string) {
+func (l *LockingMap[string, any]) Del(key string) {
 	l.RWMutex.Lock()
 	defer l.Unlock()
 
