@@ -1,7 +1,7 @@
 package porcupine
 
 // Store is an interface for a key-value store.
-type Store[Key string, Value any] interface {
+type Store[Key comparable, Value any] interface {
 	Get(Key) (Value, error)
 	Put(Key, Value)
 	Del(Key)
