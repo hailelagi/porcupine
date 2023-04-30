@@ -10,11 +10,16 @@ import (
 // serverCmd represents the server command
 var serverCmd = &cobra.Command{
 	Use:   "server",
-	Short: "Starts a server at localhost:8080",
+	Short: "Starts a server instance with a `Store`",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("starting server at https://localhost:8080")
-		// todo: expose routes or redirect to '/' with query params
+		fmt.Println(`\\\\\\\\\\\\\\\
+\\ PORCUPINE \\
+\\\\\\\\\\\\\\\
+		`)
+		fmt.Println("starting a server at https://localhost:8080")
+		fmt.Println(`Please keep this terminal process alive and issue commands to the server, 
+via a new terminal session in the cli or browser`)
 		api.Serve()
 	},
 }
