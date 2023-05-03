@@ -1,6 +1,6 @@
 # Porcupine (go)
 
-A key-value store server. See also: [porcupine-rs](https://github.com/hailelagi/porcupine-rs)
+A tiny distributed key-value store server for localhost. See also: [porcupine-rs](https://github.com/hailelagi/porcupine-rs)
 
 ## Getting started
 Start a single node porcupine, which default to `localhost:8080`:
