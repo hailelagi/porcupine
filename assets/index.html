@@ -1,0 +1,23 @@
+<html>
+<h1> Porcupine </h1>
+<h2>A tiny distributed key-value store server for localhost. </h2>
+<h3>Current Host Configuration: </h3>
+
+<ul>
+    <li> <b>Current Store:</b> {{ .Porcupine }}</li>
+    <li> <b>Cluster Formed:</b> {{ .Clustering }} </li>
+    {{if .Clustering}}
+    <li>
+        <b>Nodes:</b>
+        <ul>
+            {{range .Nodes}}
+            <li class="done"><a href="http://localhost/{{.}}">{{.}}</a></li>
+            {{end}}
+        </ul>
+    </li>
+    {{else}}
+    <p>Running a single node porcupine, configure the app
+        <a href="http://localhost:{{.DefaultPort}}/configure">configure the app.</a>
+    </p>
+    {{end}}
+</ul>

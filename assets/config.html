@@ -1,0 +1,40 @@
+<html>
+<h1> Porcupine </h1>
+<h2>A tiny distributed key-value store server for localhost. </h2>
+<h3>Current Host Configuration: </h3>
+
+<ul>
+    <li> <b>Current Store:</b> {{ .Porcupine }}</li>
+    <li> <b>Cluster Formed:</b> {{ .Clustering }} </li>
+    {{if .Clustering}}
+    <li>
+        <b>Nodes:</b>
+        <ul>
+            {{range .Nodes}}
+            <li class="done"><a href="http://localhost/{{.}}">{{.}}</a></li>
+            {{end}}
+        </ul>
+    </li>
+    {{else}}
+    <p>Running a single node porcupine, all configuration options via the web ui are
+        run on the primary node before replication occurs. </a></p>
+    {{end}}
+</ul>
+
+<h3>Change Host Configuration: </h3>
+<form action="http://localhost:{{.DefaultPort}}/configure" method="POST">
+    <div>
+        <label for="store">Choose a supported underlying data structure:</label>
+        <select name="store" id="store">
+            <option value="hashmap">Hash Map</option>
+            <option value="saab">AVL Tree</option>
+        </select>
+    </div>
+    <label for="port">Default Port</label>
+    <input name="port" id="to" value="8080" />
+
+    <div>
+        <!-- TODO: add cluster config UI opts-->
+        <button>Save</button>
+    </div>
+</form>

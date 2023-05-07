@@ -2,12 +2,20 @@ package api
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 )
 
+type HomeInfo struct {
+	Porcupine   string
+	Clustering  bool
+	Nodes       []string
+	DefaultPort string
+}
+
 func Serve() {
-	http.HandleFunc("/configure", configHandler)
+	http.HandleFunc("/configure", ConfigHandler)
 	http.HandleFunc("/get", getHandler)
 	http.HandleFunc("/ls", lsHandler)
 	http.HandleFunc("/set", setHandler)
@@ -15,10 +23,6 @@ func Serve() {
 	http.HandleFunc("/", homeHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
-}
-
-func configHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Listening you are on: %s", r.URL.Path)
 }
 
 func getHandler(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +42,14 @@ func rmHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("[waiting to dispatch]")
-	// todo: serve api docs
-	fmt.Fprintf(w, "Listening you are on: %s", r.URL.Path)
+	tmpl, err := template.ParseFiles("./assets/index.html")
+	//info := HomeInfo{"HashMap", true, []string{"8080", "8081"}}
+	info := HomeInfo{"HashMap", false, []string{}, "8080"}
+
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	tmpl.Execute(w, info)
 }

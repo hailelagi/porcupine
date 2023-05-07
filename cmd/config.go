@@ -12,11 +12,9 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "configure the store",
 	Long: `select the data structure for the store, experimenting with tradeoffs. 
-	
-	After starting the http server, you can configure the store by passing it as a flag or as a query param.
-	Example: http://localhost:8080/configure?store=hashmap o`,
+	After starting the http server, you can configure the store in the UI. Example: http://localhost:8080/configure`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var store *porcupine.Porcupine
+		var store porcupine.Porcupine
 		var stdout string
 
 		if len(args) == 0 {

@@ -17,7 +17,7 @@ var serverCmd = &cobra.Command{
 \\ PORCUPINE \\
 \\\\\\\\\\\\\\\
 		`)
-		fmt.Println("starting a server at https://localhost:8080")
+		fmt.Println("starting a server at http://localhost:8080")
 		fmt.Println(`Please keep this terminal process alive and issue commands to the server, 
 via a new terminal session in the cli or browser`)
 		api.Serve()
