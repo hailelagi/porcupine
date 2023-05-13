@@ -4,16 +4,29 @@ A tiny distributed key-value store server for localhost. See also: [porcupine-rs
 
 ## Getting started
 
-Start a single node porcupine, which default to `localhost:8080`:
+Start a single node porcupine, which defaults to `localhost:8080`:
 
 ```zsh
 porcupine server
+# or
+porcupine server --port=3000
 ```
 
 and issue it commands in a new terminal session:
 
 ```zsh
 porcupine ls
+```
+
+## Commands
+
+```zsh
+porcupine get <key>              # get a value by key
+porcupine set <key> <value>      # set key to a value
+porcupine ls                     # list stored keys
+porcupine rm  <key>              # remove an entry by key
+porcupine config --list          # list data-structures
+porcupine config <datastore>     # choose data-structure 
 ```
 
 ## Forming A key-value cluster
@@ -30,15 +43,4 @@ Or
 porcupine server --port=8080 --cluster="myClusterName"
 # in new shell
 porcupine server --port=3000 --cluster="myClusterName"
-```
-
-## Commands
-
-```zsh
-porcupine get <key>              # get a value by key
-porcupine set <key> <value>      # set key to a value
-porcupine ls                     # list stored keys
-porcupine rm  <key>              # remove an entry by key
-porcupine config --list          # list data-structures
-porcupine config <datastore>     # choose data-structure 
 ```
