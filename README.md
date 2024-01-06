@@ -1,22 +1,7 @@
-# Porcupine (go)
+# Porcupine
 
-A tiny distributed key-value store server for localhost. See also: [porcupine-rs](https://github.com/hailelagi/porcupine-rs)
+Key value store experiments, data structures and exploratory concept examples/snippets.
 
-## Getting started
-
-Start a single node porcupine, which defaults to `localhost:8080`:
-
-```zsh
-porcupine server
-# or
-porcupine server --port=3000
-```
-
-and issue it commands in a new terminal session:
-
-```zsh
-porcupine ls
-```
 
 ## Commands
 
@@ -27,20 +12,6 @@ porcupine ls                     # list stored keys
 porcupine rm  <key>              # remove an entry by key
 porcupine config --list          # list data-structures
 porcupine config <datastore>     # choose data-structure 
-```
-
-## Forming A key-value cluster
-
-Spin up as many porcupine servers as you'd like, for e.g:
-
-```zsh
-porcupine server --port-range=8080..8084 --cluster=5
-```
-
-Or
-
-```zsh
-porcupine server --port=8080 --cluster="myClusterName"
-# in new shell
-porcupine server --port=3000 --cluster="myClusterName"
+porcupine bench
+porcupine graph
 ```
