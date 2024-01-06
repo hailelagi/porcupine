@@ -29,10 +29,8 @@ func (c *ConcurrentAppendMap) Put(key string, value int) int {
 	if ok {
 		return v
 	} else {
-		// todo: return error
-		return 0
+		return -1
 	}
-
 }
 
 func (c *ConcurrentAppendMap) In(key string) bool {
