@@ -6,27 +6,26 @@ import (
 
 // MapSingleMutex uses a single global mutex to protect all operations on the map.
 type MapSingleMutex struct {
-	Data   map[int]int
-	global sync.RWMutex
+	Data map[int]int
+	sync.RWMutex
 }
 
 func NewMapSingleMutex() *MapSingleMutex {
 	return &MapSingleMutex{
-		Data:   make(map[int]int),
-		global: sync.RWMutex{},
+		Data: make(map[int]int),
 	}
 }
 
 func (m *MapSingleMutex) Increment(key int) {
-	m.global.Lock()
-	defer m.global.Unlock()
+	m.Lock()
+	defer m.Unlock()
 
 	m.Data[key]++
 }
 
 func (m *MapSingleMutex) GetValue(key int) int {
-	m.global.RLock()
-	defer m.global.RUnlock()
+	m.RLock()
+	defer m.RUnlock()
 
 	return m.Data[key]
 }

@@ -25,7 +25,7 @@ func BenchmarkMapSingleMutex(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(58)
+			key := rand.Intn(7)
 			myMap.Increment(key)
 			_ = myMap.GetValue(key)
 		}
