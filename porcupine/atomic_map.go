@@ -10,23 +10,23 @@ type Node struct {
 	next  *Node
 }
 
-type Table struct {
+type HashTable struct {
 	buckets []*Node
 	size    int
 }
 
-func NewHashTable(size int) *Table {
-	return &Table{
+func NewHashTable(size int) *HashTable {
+	return &HashTable{
 		buckets: make([]*Node, size),
 		size:    size,
 	}
 }
 
-func (ht *Table) Put(key string, value interface{}) {
+func (ht *HashTable) Put(key string, value interface{}) {
 	// todo
 }
 
-func (ht *Table) Get(key string) interface{} {
+func (ht *HashTable) Get(key string) interface{} {
 	// todo
 	return nil
 }

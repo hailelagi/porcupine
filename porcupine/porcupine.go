@@ -1,7 +1,25 @@
 package porcupine
 
+import constraints "golang.org/x/exp/constraints"
+
+// Table is an interface for an unordered key-value data structure
+type Table[Key comparable, Value any] interface {
+	Get(Key) (Value, error)
+	Put(Key, Value)
+	Del(Key)
+	In(Key) bool
+}
+
+// OrderTable is an interface for an unordered key-value data structure
+type OrderTable[Key constraints.Ordered, Value any] interface {
+	Get(Key) (Value, error)
+	Put(Key, Value)
+	Del(Key)
+	In(Key) bool
+}
+
 // Store is an interface for a key-value store.
-type Store[Key comparable, Value any] interface {
+type Store[Key any, Value any] interface {
 	Get(Key) (Value, error)
 	Put(Key, Value)
 	Del(Key)
