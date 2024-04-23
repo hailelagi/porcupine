@@ -8,36 +8,37 @@ import (
 )
 
 type BST[Key constraints.Ordered, Value any] struct {
-	key   Key
-	value any
-
-	parent *BST[Key, Value]
-	left   *BST[Key, Value]
-	right  *BST[Key, Value]
-
+	root *BSTNode[Key, Value]
 	sync.RWMutex
+}
+
+type BSTNode[Key constraints.Ordered, Value any] struct {
+	key   Key
+	value Value
+
+	left  *BSTNode[Key, Value]
+	right *BSTNode[Key, Value]
 }
 
 // BST Property:
 // all nodes left have key < x and right x > key.
-func newSearchTree() BST[int, any] {
-	return BST[int, any]{
-		parent: nil,
-		left:   nil,
-		right:  nil,
+func NewBSTree() BST[int, int] {
+	return BST[int, int]{
+		root: &BSTNode[int, int]{key: 0, value: 0},
 	}
 }
 
 // take the pointer to the root node
-func (t *BST[K, V]) Get(key K) (int, error) {
+func (t *BST[K, V]) Get(key K) (V, error) {
 	t.RLock()
 	defer t.RUnlock()
 
-	currentNode := t.parent
+	var empty V
+	currentNode := t.root
 
 	for currentNode != nil {
 		if currentNode.key == key {
-			return currentNode.value.(int), nil
+			return currentNode.value, nil
 		} else if currentNode.key < key {
 			currentNode = currentNode.left
 		} else {
@@ -45,21 +46,47 @@ func (t *BST[K, V]) Get(key K) (int, error) {
 		}
 	}
 
-	return 0, errors.New("not found")
+	return empty, errors.New("not found")
 }
 
-func (l *BST[string, any]) Put(key string, value any) {
-	l.RWMutex.Lock()
-	defer l.Unlock()
-}
+// devolves into a linkedlist
+func (t *BST[K, V]) Put(key K, value V) error {
+	t.Lock()
+	defer t.Unlock()
+	var emptyKey K
 
-func (l *BST[string, any]) In(key string) bool {
-	// O(n) in order traversal
-	return false
-}
+	currentNode := t.root
 
-// O log(N)
-func (l *BST[string, any]) Del(key string) {
-	l.RWMutex.Lock()
-	defer l.Unlock()
+	if t.root.key == emptyKey {
+		currentNode.key = key
+		currentNode.value = value
+
+		return nil
+	}
+
+	for currentNode != nil {
+		if currentNode.key == key {
+			currentNode.value = value
+			return nil
+		} else if currentNode.key <= key {
+			next := currentNode.left
+			if next == nil {
+				currentNode.left = &BSTNode[K, V]{key: key, value: value}
+				return nil
+			} else {
+				currentNode = next
+			}
+		} else {
+			next := currentNode.right
+
+			if next == nil {
+				currentNode.right = &BSTNode[K, V]{key: key, value: value}
+				return nil
+			} else {
+				currentNode = next
+			}
+		}
+	}
+
+	return nil
 }

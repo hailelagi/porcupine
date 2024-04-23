@@ -1,6 +1,10 @@
 package porcupine
 
 type RedBlackTree struct {
-	name string
-	node *RedBlackTree
+	root *RBNode
+}
+
+type RBNode struct {
+	color bool
+	node  *RedBlackTree
 }

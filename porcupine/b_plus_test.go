@@ -1,15 +1,11 @@
 package porcupine
 
-import (
-	"testing"
-)
-
+/*
 func BenchmarkInsertBTree(b *testing.B) {
 	tree, err := NewBPlusTree("datafile.csv")
 	if err != nil {
 		b.Fatalf("Error opening tree file: %v", err)
 	}
-	defer tree.Close()
 
 	for i := 0; i < 100_000; i++ {
 		key := i
@@ -27,7 +23,6 @@ func BenchmarkAccessBTree(b *testing.B) {
 	if err != nil {
 		b.Fatalf("Error opening tree file: %v", err)
 	}
-	defer tree.Close()
 
 	for i := 0; i < 100_000; i++ {
 		key := i
@@ -48,3 +43,4 @@ func BenchmarkAccessBTree(b *testing.B) {
 	}
 
 }
+*/

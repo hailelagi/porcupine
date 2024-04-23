@@ -2,8 +2,15 @@
 
 Key value store experiments, data structures and exploratory concept examples/snippets.
 
+## what kinda works
 
-## Commands
+```zsh
+cd /porcupine
+go test .
+go test -bench=.
+```
+
+## what would be nice to do
 
 ```zsh
 porcupine get <key>              # get a value by key
