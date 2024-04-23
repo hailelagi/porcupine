@@ -68,7 +68,7 @@ func (t *BST[K, V]) Put(key K, value V) error {
 		if currentNode.key == key {
 			currentNode.value = value
 			return nil
-		} else if currentNode.key <= key {
+		} else if currentNode.key < key {
 			next := currentNode.left
 			if next == nil {
 				currentNode.left = &BSTNode[K, V]{key: key, value: value}

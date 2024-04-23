@@ -38,7 +38,7 @@ func TestBSTPutAndGet(t *testing.T) {
 
 }
 
-func BenchmarkBSTGet(b *testing.B) {
+func BenchmarkBSTReadAndWrite(b *testing.B) {
 	bst := NewBSTree()
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -47,7 +47,7 @@ func BenchmarkBSTGet(b *testing.B) {
 			err := bst.Put(key, key+100)
 
 			if err != nil {
-				b.Errorf("fail during get bench err: %v", err)
+				b.Errorf("fail during bench err: %v", err)
 			}
 		}
 	})
@@ -64,10 +64,10 @@ func BenchmarkBSTMostlyReads(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			key := rand.Intn(10) + 1
-			_, err := bst.Get(key)
+			v, err := bst.Get(key)
 
 			if err != nil {
-				b.Errorf("fail during get bench err: %v, key: %v", err, key)
+				b.Errorf("fail during bench err: %v, key: %v", err, v)
 			}
 		}
 	})
@@ -82,7 +82,7 @@ func BenchmarkBSTMostlyWrites(b *testing.B) {
 			err := bst.Put(key, key*100)
 
 			if err != nil {
-				b.Errorf("fail during get bench err: %v, key: %v", err, key)
+				b.Errorf("fail during bench err: %v, key: %v", err, key)
 			}
 		}
 	})
