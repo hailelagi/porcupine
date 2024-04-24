@@ -20,6 +20,7 @@ func Serve() {
 	http.HandleFunc("/ls", lsHandler)
 	http.HandleFunc("/set", setHandler)
 	http.HandleFunc("/rm", rmHandler)
+	http.HandleFunc("/line", plotHandler)
 	http.HandleFunc("/", homeHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -38,6 +39,18 @@ func setHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func rmHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Listening you are on: %s", r.URL.Path)
+}
+
+func plotHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("./assets/line.html")
+
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	tmpl.Execute(w, nil)
 	fmt.Fprintf(w, "Listening you are on: %s", r.URL.Path)
 }
 

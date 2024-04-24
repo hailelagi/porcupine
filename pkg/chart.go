@@ -1,12 +1,9 @@
-package main
+package pkg
 
 import (
-	"io"
 	"math/rand"
-	"os"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
-	"github.com/go-echarts/go-echarts/v2/components"
 	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
@@ -278,27 +275,4 @@ func lineSymbols() *charts.Line {
 		))
 
 	return line
-}
-
-func ChartExample() {
-	page := components.NewPage()
-	page.AddCharts(
-		lineBase(),
-		lineShowLabel(),
-		lineSymbols(),
-		lineMarkPoint(),
-		lineSplitLine(),
-		lineStep(),
-		lineSmooth(),
-		lineArea(),
-		lineSmoothArea(),
-		lineOverlap(),
-		lineMulti(),
-		lineDemo(),
-	)
-	f, err := os.Create("assets/line.html")
-	if err != nil {
-		panic(err)
-	}
-	page.Render(io.MultiWriter(f))
 }
