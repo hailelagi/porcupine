@@ -10,6 +10,13 @@ go test .
 go test -bench=.
 ```
 
+and
+
+```zsh
+porcupine server
+porcupine graph
+```
+
 ## what would be nice to do
 
 ```zsh
@@ -20,5 +27,4 @@ porcupine rm  <key>              # remove an entry by key
 porcupine config --list          # list data-structures
 porcupine config <datastore>     # choose data-structure 
 porcupine bench
-porcupine graph
 ```
