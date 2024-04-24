@@ -9,5 +9,4 @@ import "github.com/hailelagi/porcupine-go/cmd"
 // https://abhinavg.net/2022/08/13/flag-subcommand/
 func main() {
 	cmd.Execute()
-	// porcupine.PrintFineMap()
 }

@@ -5,24 +5,25 @@ import constraints "golang.org/x/exp/constraints"
 // Table is an interface for an unordered key-value data structure
 type Table[Key comparable, Value any] interface {
 	Get(Key) (Value, error)
-	Put(Key, Value)
-	Del(Key)
+	Put(Key, Value) error
+	Del(Key) error
 	In(Key) bool
 }
 
 // OrderTable is an interface for an unordered key-value data structure
 type OrderTable[Key constraints.Ordered, Value any] interface {
 	Get(Key) (Value, error)
-	Put(Key, Value)
-	Del(Key)
+	Scan(Key, Key) ([]Value, error)
+	Put(Key, Value) error
+	Del(Key) error
 	In(Key) bool
 }
 
 // Store is an interface for a key-value store.
 type Store[Key any, Value any] interface {
 	Get(Key) (Value, error)
-	Put(Key, Value)
-	Del(Key)
+	Put(Key, Value) error
+	Del(Key) error
 	In(Key) bool
 }
 
@@ -69,7 +70,7 @@ func NewPorcupine(storeConfig string) Porcupine {
 
 	switch storeConfig {
 	case "hashmap":
-		store = &LockingMap[string, any]{}
+		store = nil
 	// todo: add supported data structures
 	default:
 		panic("todo")

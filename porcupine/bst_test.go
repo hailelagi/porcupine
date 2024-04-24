@@ -43,7 +43,7 @@ func BenchmarkBSTReadAndWrite(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(7)
+			key := rand.Intn(700000)
 			err := bst.Put(key, key+100)
 
 			if err != nil {
@@ -57,13 +57,13 @@ func BenchmarkBSTMostlyReads(b *testing.B) {
 	bst := NewBSTree()
 
 	// Initialize the map with some data
-	for i := 1; i <= 1000; i++ {
+	for i := 1; i <= 10000; i++ {
 		bst.Put(i, i*100)
 	}
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(10) + 1
+			key := rand.Intn(10_000) + 1
 			v, err := bst.Get(key)
 
 			if err != nil {
@@ -78,7 +78,7 @@ func BenchmarkBSTMostlyWrites(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(10)
+			key := rand.Intn(100000)
 			err := bst.Put(key, key*100)
 
 			if err != nil {

@@ -13,7 +13,7 @@ func BenchmarkConcurrentMap(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(7)
+			key := rand.Intn(100_000)
 			myMap.Increment(key)
 			_ = myMap.GetValue(key)
 		}
@@ -25,7 +25,7 @@ func BenchmarkMapSingleMutex(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(7)
+			key := rand.Intn(100_000)
 			myMap.Increment(key)
 			_ = myMap.GetValue(key)
 		}
@@ -41,7 +41,7 @@ func BenchmarkMapSingleMutexMostlyWrites(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(7)
+			key := rand.Intn(100_000)
 			myMap.Increment(key)
 		}
 	})
@@ -52,7 +52,7 @@ func BenchmarkConcurrentMapMostlyWrites(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(7)
+			key := rand.Intn(100_000)
 			myMap.Increment(key)
 		}
 	})
@@ -66,13 +66,13 @@ func BenchmarkMapSingleMutexMostlyReads(b *testing.B) {
 	myMap := NewMapSingleMutex()
 
 	// Initialize the map with some data
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100_000; i++ {
 		myMap.Increment(i)
 	}
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(7)
+			key := rand.Intn(100_000)
 			_ = myMap.GetValue(key)
 		}
 	})
@@ -82,13 +82,13 @@ func BenchmarkConcurrentMapMostlyReads(b *testing.B) {
 	myMap := NewMap(8)
 
 	// Initialize the map with some data
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100_000; i++ {
 		myMap.Increment(i)
 	}
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(7)
+			key := rand.Intn(100_000)
 			_ = myMap.GetValue(key)
 		}
 	})
