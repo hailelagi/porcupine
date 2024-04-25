@@ -2,7 +2,6 @@ package porcupine
 
 import (
 	"errors"
-	"fmt"
 	"math"
 	"slices"
 )
@@ -259,7 +258,6 @@ func (n *Node) delete(t *BTree, key int) error {
 	}
 
 	if n.kind == ROOT_NODE {
-		fmt.Println(n)
 		return nil
 	}
 
