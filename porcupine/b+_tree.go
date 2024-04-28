@@ -2,8 +2,10 @@ package porcupine
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"slices"
+	"sync"
 )
 
 type NodeType int
@@ -20,6 +22,7 @@ const (
 
 type BTree struct {
 	root *Node
+	sync.RWMutex
 }
 
 type Node struct {
@@ -41,6 +44,9 @@ type Node struct {
 }
 
 func (t *BTree) Search(key int) ([]int, int, error) {
+	t.RLock()
+	defer t.RUnlock()
+
 	if t.root == nil {
 		return nil, 0, errors.New("empty tree")
 	} else {
@@ -52,6 +58,9 @@ func (t *BTree) Search(key int) ([]int, int, error) {
 }
 
 func (t *BTree) Insert(key int) error {
+	t.Lock()
+	defer t.Unlock()
+
 	if t.root == nil {
 		t.root = &Node{kind: ROOT_NODE}
 		t.root.insert(t, key)
@@ -60,6 +69,10 @@ func (t *BTree) Insert(key int) error {
 	} else {
 		// find leaf node to insert into or root at first
 		n, _, err := t.root.Search(key)
+
+		if n == nil {
+			return fmt.Errorf("leaf node not found: %v", err)
+		}
 
 		if err == nil {
 			return errors.New("duplicate key/value")
@@ -70,6 +83,9 @@ func (t *BTree) Insert(key int) error {
 }
 
 func (t *BTree) Delete(key int) error {
+	t.Lock()
+	defer t.Unlock()
+
 	if t.root == nil {
 		return errors.New("empty tree")
 	} else {
@@ -85,15 +101,15 @@ func (t *BTree) Delete(key int) error {
 }
 
 func (n *Node) Search(key int) (*Node, int, error) {
+	// todo: fine-grained concurrency with latches
 	idx, found := slices.BinarySearch(n.keys, key)
 
 	if found {
 		if len(n.children) == 0 {
 			return n, idx, nil
 		} else {
-			return nil, 0, errors.ErrUnsupported
+			return n.children[idx].Search(key)
 		}
-
 	}
 
 	if len(n.children) == 0 {

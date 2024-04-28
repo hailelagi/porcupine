@@ -53,12 +53,17 @@ func BenchmarkBSTReadAndWrite(b *testing.B) {
 	})
 }
 
+// tree is unbalanced and therefore searches border on linear access.
 func BenchmarkBSTMostlyReads(b *testing.B) {
 	bst := NewBSTree()
 
 	// Initialize the map with some data
-	for i := 1; i <= 10000; i++ {
-		bst.Put(i, i*100)
+	for i := 1; i <= 10_000; i++ {
+		err := bst.Put(i, i*100)
+
+		if err != nil {
+			b.Error()
+		}
 	}
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -78,7 +83,7 @@ func BenchmarkBSTMostlyWrites(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(100000)
+			key := rand.Intn(10_000)
 			err := bst.Put(key, key*100)
 
 			if err != nil {

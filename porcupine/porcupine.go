@@ -13,7 +13,7 @@ type Table[Key comparable, Value any] interface {
 // OrderTable is an interface for an unordered key-value data structure
 type OrderTable[Key constraints.Ordered, Value any] interface {
 	Get(Key) (Value, error)
-	Scan(Key, Key) ([]Value, error)
+	Range(Key, Key) ([]Value, error)
 	Put(Key, Value) error
 	Del(Key) error
 	In(Key) bool
