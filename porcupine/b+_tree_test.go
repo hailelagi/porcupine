@@ -3,11 +3,12 @@ package porcupine
 import (
 	"log"
 	"math/rand"
+	"slices"
 	"testing"
 )
 
 func FuzzInsertKeys(f *testing.F) {
-	var tree BTree
+	tree := NewBTree(3)
 
 	for key := 1; key < 10_000; key++ {
 		f.Add(key)
@@ -15,7 +16,7 @@ func FuzzInsertKeys(f *testing.F) {
 
 	f.Fuzz(func(t *testing.T, key int) {
 		tree.Insert(key)
-		found := keyExists(&tree, key)
+		found := keyExists(tree, key)
 
 		if !found {
 			t.Errorf("not found %v", key)
@@ -24,7 +25,7 @@ func FuzzInsertKeys(f *testing.F) {
 }
 
 func FuzzSearchKeys(f *testing.F) {
-	var tree BTree
+	tree := NewBTree(3)
 
 	for key := 1; key < 10_000; key++ {
 		f.Add(key)
@@ -53,7 +54,7 @@ func FuzzSearchKeys(f *testing.F) {
 }
 
 func FuzzDeleteKeys(f *testing.F) {
-	var tree BTree
+	tree := NewBTree(3)
 
 	for key := 1; key < 10_000; key++ {
 		f.Add(key)
@@ -90,8 +91,96 @@ func keyExists(t *BTree, key int) bool {
 	return false
 }
 
+func TestBTreeSingleSplit(t *testing.T) {
+	tree := NewBTree(3)
+	elements := []int{5, 2, 1, 4}
+
+	for _, e := range elements {
+		tree.Insert(e)
+	}
+
+	if slices.Compare(tree.root.keys, []int{2, 4}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[0].data, []int{1}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[1].data, []int{2}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[2].data, []int{4, 5}) != 0 {
+		t.Fail()
+	}
+}
+
+func TestBTreeSingleSplitDegreeFive(t *testing.T) {
+	tree := NewBTree(5)
+	elements := []int{5, 2, 1, 4, 8, 9, 7}
+
+	for _, e := range elements {
+		tree.Insert(e)
+	}
+
+	if slices.Compare(tree.root.keys, []int{4, 7}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[0].data, []int{1, 2}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[1].data, []int{4, 5}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[2].data, []int{7, 8, 9}) != 0 {
+		t.Fail()
+	}
+}
+
+func TestBTreeMultiSplit(t *testing.T) {
+	tree := NewBTree(3)
+	elements := []int{5, 2, 1, 4, 6, 7, 8, 3}
+
+	for _, e := range elements {
+		tree.Insert(e)
+	}
+
+	if slices.Compare(tree.root.keys, []int{4, 6}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[0].keys, []int{2}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[0].children[1].data, []int{2, 3}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[1].keys, []int{5}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[1].children[1].data, []int{5}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[2].keys, []int{7}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[2].children[1].data, []int{7, 8}) != 0 {
+		t.Fail()
+	}
+
+}
+
 func BenchmarkBTree(b *testing.B) {
-	var tree BTree
+	tree := NewBTree(3)
 
 	for i := 0; i <= 100_000; i++ {
 		key := i
@@ -153,7 +242,7 @@ func BenchmarkBTree(b *testing.B) {
 }
 
 func BenchmarkBTreeConcurrentAccess(b *testing.B) {
-	var tree BTree
+	tree := NewBTree(3)
 
 	for i := 0; i <= 100_000; i++ {
 		key := i
@@ -179,7 +268,7 @@ func BenchmarkBTreeConcurrentAccess(b *testing.B) {
 }
 
 func BenchmarkBTreeConcurrentWriter(b *testing.B) {
-	var tree BTree
+	tree := NewBTree(3)
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
