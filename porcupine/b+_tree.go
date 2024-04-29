@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"slices"
+	"sort"
 	"sync"
 )
 
@@ -124,6 +125,10 @@ func (n *Node) Search(key int) (*Node, int, error) {
 		return n, 0, errors.New("key not found, at leaf containing key")
 	}
 
+	if idx >= len(n.children) {
+		return n.children[idx-1].Search(key)
+	}
+
 	return n.children[idx].Search(key)
 }
 
@@ -156,17 +161,13 @@ func (n *Node) SearchToDelete(key int) (*Node, int, error) {
 
 func (n *Node) insert(t *BTree, key int) error {
 	if n.kind == ROOT_NODE && len(n.children) == 0 {
-		n.data = append(n.data, key)
-		n.keys = append(n.keys, key)
+		n.data = findInsertAt(n.data, key)
+		n.keys = findInsertAt(n.keys, key)
 	}
 
 	if n.kind == LEAF_NODE {
-		n.data = append(n.data, key)
+		n.data = findInsertAt(n.data, key)
 	}
-
-	// simplicity/easy correctness, B-Trees should maintain order implicitly
-	slices.Sort(n.data)
-	slices.Sort(n.keys)
 
 	if len(n.data) < t.maxDegree {
 		return nil
@@ -192,7 +193,7 @@ func (n *Node) split(t *BTree, midIdx int) error {
 		newNode := &Node{kind: LEAF_NODE, parent: n.parent, data: right}
 
 		n.parent.children = append(n.parent.children, newNode)
-		n.parent.keys = append(n.parent.keys, splitPoint)
+		n.parent.keys = findInsertAt(n.parent.keys, splitPoint)
 
 		// sibling pointers - only on leaf nodes
 		n.next = newNode
@@ -207,7 +208,7 @@ func (n *Node) split(t *BTree, midIdx int) error {
 
 		newNode := &Node{kind: INTERNAL_NODE, keys: right, parent: n.parent}
 		n.parent.children = append(n.parent.children, newNode)
-		n.parent.keys = append(n.parent.keys, splitPoint)
+		n.parent.keys = findInsertAt(n.parent.keys, splitPoint)
 
 		/*
 			Notice that the splitting operation modifies three nodes.
@@ -230,7 +231,7 @@ func (n *Node) split(t *BTree, midIdx int) error {
 
 			// demote current root
 			newRoot := &Node{kind: ROOT_NODE, parent: nil}
-			newRoot.keys = append(newRoot.keys, splitPoint)
+			newRoot.keys = findInsertAt(newRoot.keys, splitPoint)
 			t.root = newRoot
 
 			// pointer relocation/bookkeeping
@@ -426,6 +427,22 @@ func (n *Node) preMerge(size int) (*Node, int, error) {
 }
 
 /* UTILS */
+
+func findInsertAt(elems []int, elem int) []int {
+	if len(elems) == 0 {
+		return append(elems, elem)
+	}
+
+	idx := sort.Search(len(elems), func(i int) bool {
+		return elems[i] >= elem
+	})
+
+	elems = append(elems, 0)
+	copy(elems[idx+1:], elems[idx:])
+	elems[idx] = elem
+
+	return elems
+}
 
 func _assert(cond bool) {
 	if !cond {

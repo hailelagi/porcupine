@@ -280,3 +280,43 @@ func BenchmarkBTreeConcurrentWriter(b *testing.B) {
 		}
 	})
 }
+
+func BenchmarkBTreeIndexSampleRead(b *testing.B) {
+	tree := NewBTree(500)
+
+	for i := 0; i <= 1_000_000; i++ {
+		key := i
+		// value := i * 10
+		err := tree.Insert(key)
+		if err != nil {
+			b.Errorf("Error inserting key %d: %v", key, err)
+		}
+	}
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			key := rand.Intn(1_000_000)
+			n, idx, err := tree.Search(key)
+
+			if err != nil {
+				b.Errorf("Error searching key %d: %v node: %v at: %v", key, err, n, idx)
+			}
+		}
+	})
+}
+
+func BenchmarkBTreeIndexSampleWrite(b *testing.B) {
+	tree := NewBTree(500)
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			key := rand.Intn(1_000_000)
+			err := tree.Insert(key)
+			if err != nil {
+				b.Errorf("Error inserting key %d: %v", key, err)
+			}
+		}
+	})
+}
