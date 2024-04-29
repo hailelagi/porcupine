@@ -20,6 +20,8 @@ const (
 	LEAF_NODE
 )
 
+var ErrDuplicateKey error = errors.New("duplicate key/value")
+
 type BTree struct {
 	root *Node
 	sync.RWMutex
@@ -75,7 +77,7 @@ func (t *BTree) Insert(key int) error {
 		}
 
 		if err == nil {
-			return errors.New("duplicate key/value")
+			return ErrDuplicateKey
 		}
 
 		return n.insert(t, key)

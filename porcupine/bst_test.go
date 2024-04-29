@@ -40,12 +40,17 @@ func TestBSTPutAndGet(t *testing.T) {
 
 func BenchmarkBSTReadAndWrite(b *testing.B) {
 	bst := NewBSTree()
+	b.ResetTimer()
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(700000)
+			key := rand.Intn(100_000)
 			err := bst.Put(key, key+100)
+			v, errGet := bst.Get(key)
 
+			if v != key+100 || errGet != nil {
+				b.Error("fail during r")
+			}
 			if err != nil {
 				b.Errorf("fail during bench err: %v", err)
 			}
@@ -57,22 +62,20 @@ func BenchmarkBSTReadAndWrite(b *testing.B) {
 func BenchmarkBSTMostlyReads(b *testing.B) {
 	bst := NewBSTree()
 
-	// Initialize the map with some data
 	for i := 1; i <= 10_000; i++ {
-		err := bst.Put(i, i*100)
-
-		if err != nil {
-			b.Error()
-		}
+		key := rand.Intn(10_000) + 1
+		bst.Put(key, key*42)
 	}
+
+	b.ResetTimer()
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			key := rand.Intn(10_000) + 1
 			v, err := bst.Get(key)
 
-			if err != nil {
-				b.Errorf("fail during bench err: %v, key: %v", err, v)
+			if v != key*42 && err == nil {
+				b.Errorf("fail during bench err")
 			}
 		}
 	})
@@ -80,14 +83,57 @@ func BenchmarkBSTMostlyReads(b *testing.B) {
 
 func BenchmarkBSTMostlyWrites(b *testing.B) {
 	bst := NewBSTree()
+	b.ResetTimer()
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			key := rand.Intn(10_000)
+			key := rand.Intn(10_000) + 1
 			err := bst.Put(key, key*100)
 
 			if err != nil {
 				b.Errorf("fail during bench err: %v, key: %v", err, key)
+			}
+		}
+	})
+}
+
+func BenchmarkBSTUnbalancedRead(b *testing.B) {
+	bst := NewBSTree()
+
+	for i := 1; i <= 10_000; i++ {
+		bst.Put(i, i*42)
+	}
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			key := rand.Intn(10_000) + 1
+			value, err := bst.Get(key)
+
+			if value != key*42 || err != nil {
+				b.Errorf("fail during bench w")
+			}
+		}
+	})
+}
+
+func BenchmarkBSTUnbalancedWrite(b *testing.B) {
+	bst := NewBSTree()
+
+	for i := 1; i <= 10_000; i++ {
+		bst.Put(i, i*100)
+	}
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			key := rand.Intn(10_000) + 1
+			err := bst.Put(key, key*42)
+
+			if err != nil {
+				b.Errorf("fail during bench w")
 			}
 		}
 	})

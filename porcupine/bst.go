@@ -23,9 +23,7 @@ type BSTNode[Key constraints.Ordered, Value any] struct {
 // BST Property:
 // all nodes left have key < x and right x > key.
 func NewBSTree() BST[int, int] {
-	return BST[int, int]{
-		root: &BSTNode[int, int]{key: 0, value: 0},
-	}
+	return BST[int, int]{root: nil}
 }
 
 // take the pointer to the root node
@@ -53,13 +51,11 @@ func (t *BST[K, V]) Get(key K) (V, error) {
 func (t *BST[K, V]) Put(key K, value V) error {
 	t.Lock()
 	defer t.Unlock()
-	var emptyKey K
 
 	currentNode := t.root
 
-	if t.root.key == emptyKey {
-		currentNode.key = key
-		currentNode.value = value
+	if t.root == nil {
+		t.root = &BSTNode[K, V]{key: key, value: value}
 
 		return nil
 	}

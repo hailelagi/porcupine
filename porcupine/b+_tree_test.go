@@ -89,24 +89,7 @@ func keyExists(t *BTree, key int) bool {
 	return false
 }
 
-// todo: this should not be this fast.
-// something is being optimised away or incorrect.
-func BenchmarkInsertBTree(b *testing.B) {
-	var tree BTree
-
-	b.Run("insert", func(pb *testing.B) {
-		for i := 0; i <= 100_000; i++ {
-
-			err := tree.Insert(i)
-
-			if err != nil {
-				b.Errorf("Error inserting key %d: %v", i, err)
-			}
-		}
-	})
-}
-
-func BenchmarkAccessBTree(b *testing.B) {
+func BenchmarkBTree(b *testing.B) {
 	var tree BTree
 
 	for i := 0; i <= 100_000; i++ {
@@ -117,6 +100,21 @@ func BenchmarkAccessBTree(b *testing.B) {
 			b.Errorf("Error inserting key %d: %v", key, err)
 		}
 	}
+
+	b.ResetTimer()
+
+	b.Run("write", func(pb *testing.B) {
+		for i := 0; i < pb.N; i++ {
+			// value := i * 10
+			err := tree.Insert(i)
+
+			if err == ErrDuplicateKey {
+				b.Log("warn duplicate insert")
+			} else if err != nil {
+				b.Errorf("Error inserting key %d: %v", i, err)
+			}
+		}
+	})
 
 	b.Run("access", func(pb *testing.B) {
 		for i := 0; i < pb.N; i++ {
@@ -128,9 +126,24 @@ func BenchmarkAccessBTree(b *testing.B) {
 			}
 		}
 	})
+
+	b.Run("read/write", func(pb *testing.B) {
+		for i := 0; i <= pb.N; i++ {
+			err := tree.Insert(i)
+			n, idx, searchErr := tree.Search(i)
+
+			if searchErr != nil {
+				b.Errorf("Error searching key %d: %v node: %v at: %v", i, err, n, idx)
+			}
+
+			if err != nil {
+				b.Logf("warning inserting %d: %v", i, err)
+			}
+		}
+	})
 }
 
-func BenchmarkConcurrentAccessBTree(b *testing.B) {
+func BenchmarkBTreeConcurrentAccess(b *testing.B) {
 	var tree BTree
 
 	for i := 0; i <= 100_000; i++ {
@@ -142,6 +155,8 @@ func BenchmarkConcurrentAccessBTree(b *testing.B) {
 		}
 	}
 
+	b.ResetTimer()
+
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			key := rand.Intn(100_000)
@@ -149,6 +164,20 @@ func BenchmarkConcurrentAccessBTree(b *testing.B) {
 
 			if err != nil {
 				b.Errorf("Error searching key %d: %v node: %v at: %v", key, err, n, idx)
+			}
+		}
+	})
+}
+
+func BenchmarkBTreeConcurrentWriter(b *testing.B) {
+	var tree BTree
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			key := rand.Intn(100_000)
+			err := tree.Insert(key)
+			if err != nil {
+				b.Errorf("Error inserting key %d: %v", key, err)
 			}
 		}
 	})
