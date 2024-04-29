@@ -25,6 +25,7 @@ var ErrDuplicateKey error = errors.New("duplicate key/value")
 type BTree struct {
 	root *Node
 	sync.RWMutex
+	nodeCount int
 }
 
 type Node struct {
@@ -67,6 +68,7 @@ func (t *BTree) Insert(key int) error {
 		t.root = &Node{kind: ROOT_NODE}
 		t.root.insert(t, key)
 
+		t.nodeCount++
 		return nil
 	} else {
 		// find leaf node to insert into or root at first
@@ -80,6 +82,7 @@ func (t *BTree) Insert(key int) error {
 			return ErrDuplicateKey
 		}
 
+		t.nodeCount++
 		return n.insert(t, key)
 	}
 }
@@ -95,6 +98,7 @@ func (t *BTree) Delete(key int) error {
 		n, _, err := t.root.SearchDelete(key)
 
 		if err == nil {
+			t.nodeCount--
 			return n.delete(t, key)
 		}
 

@@ -1,6 +1,7 @@
 package porcupine
 
 import (
+	"log"
 	"math/rand"
 	"testing"
 )
@@ -104,17 +105,20 @@ func BenchmarkBTree(b *testing.B) {
 	b.ResetTimer()
 
 	b.Run("write", func(pb *testing.B) {
-		for i := 0; i < pb.N; i++ {
+		for i := 10_000; i < pb.N; i++ {
 			// value := i * 10
-			err := tree.Insert(i)
+			key := rand.Intn(100_000)
+			err := tree.Insert(key)
 
 			if err == ErrDuplicateKey {
-				b.Log("warn duplicate insert")
+				log.Print("warn duplicate insert")
 			} else if err != nil {
 				b.Errorf("Error inserting key %d: %v", i, err)
 			}
 		}
 	})
+
+	log.Printf("current node count: %v", tree.nodeCount)
 
 	b.Run("access", func(pb *testing.B) {
 		for i := 0; i < pb.N; i++ {
@@ -127,10 +131,13 @@ func BenchmarkBTree(b *testing.B) {
 		}
 	})
 
+	log.Printf("current node count: %v", tree.nodeCount)
+
 	b.Run("read/write", func(pb *testing.B) {
 		for i := 0; i <= pb.N; i++ {
-			err := tree.Insert(i)
-			n, idx, searchErr := tree.Search(i)
+			key := rand.Intn(100_000)
+			err := tree.Insert(key)
+			n, idx, searchErr := tree.Search(key)
 
 			if searchErr != nil {
 				b.Errorf("Error searching key %d: %v node: %v at: %v", i, err, n, idx)
@@ -141,6 +148,8 @@ func BenchmarkBTree(b *testing.B) {
 			}
 		}
 	})
+
+	log.Printf("current node count: %v", tree.nodeCount)
 }
 
 func BenchmarkBTreeConcurrentAccess(b *testing.B) {
