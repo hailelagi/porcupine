@@ -179,6 +179,54 @@ func TestBTreeMultiSplit(t *testing.T) {
 
 }
 
+func TestBTreeMultiDelete(t *testing.T) {
+	tree := NewBTree(3)
+	elements := []int{5, 2, 1, 4, 6, 7, 8, 3}
+
+	for _, e := range elements {
+		tree.Insert(e)
+	}
+
+	// deletion works slightly differently from how one
+	// would expect a b-tree to merge.
+	// it prefers the leftmost neighbour and doesn't steal.
+
+	tree.Delete(5)
+
+	if slices.Compare(tree.root.keys, []int{4, 6}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[0].keys, []int{2}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[0].children[0].data, []int{1}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[0].children[1].data, []int{2, 3}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[0].children[2].data, []int{4}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[1].keys, []int{7}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[1].children[0].data, []int{6}) != 0 {
+		t.Fail()
+	}
+
+	if slices.Compare(tree.root.children[1].children[1].data, []int{7, 8}) != 0 {
+		t.Fail()
+	}
+
+}
+
 func BenchmarkBTree(b *testing.B) {
 	tree := NewBTree(3)
 
