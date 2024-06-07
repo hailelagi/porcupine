@@ -132,7 +132,7 @@ func (n *Node) Search(key int) (*Node, int, error) {
 	return n.children[idx].Search(key)
 }
 
-// todo: collapse this function into one
+// TODO(refactor): collapse this function into one
 func (n *Node) SearchToDelete(key int) (*Node, int, error) {
 	idx, found := slices.BinarySearch(n.keys, key)
 
@@ -159,6 +159,7 @@ func (n *Node) SearchToDelete(key int) (*Node, int, error) {
 	return n.children[idx].SearchToDelete(key)
 }
 
+// TODO(bug): buggy - https://github.com/hailelagi/porcupine/actions/runs/9423498479/job/25962006765
 func (n *Node) insert(t *BTree, key int) error {
 	if n.kind == ROOT_NODE && len(n.children) == 0 {
 		n.data = findInsertAt(n.data, key)
