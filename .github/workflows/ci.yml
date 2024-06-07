@@ -20,4 +20,4 @@ jobs:
       - name: Run vetting
         run: go vet
       - name: Run BenchMarks
-        run: cd porcupine && go test -bench=.
+        run: cd porcupine && go test -bench=. -benchmem ./...
