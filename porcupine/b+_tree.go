@@ -39,7 +39,7 @@ type Node struct {
 
 	// sibling pointers these help with deletions + range queries
 	// right most pointer storage is implicit since this is an in-memory model
-	// this will look very differently when layed out for disk
+	// this will look very differently when laid out for disk
 	next     *Node
 	previous *Node
 }
@@ -289,7 +289,7 @@ func (n *Node) delete(t *BTree, key int) error {
 			return errors.New("see rebalancing.go")
 		}
 	} else {
-		// should we update the parent's seperator?
+		// should we update the parent's separator?
 		if n.parent.keys[0] < n.data[0] {
 			// delete the key from the parent
 			for i, k := range n.parent.keys {

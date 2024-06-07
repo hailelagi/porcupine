@@ -7,6 +7,10 @@ import (
 	"testing"
 )
 
+/*
+TODO: refactor these tests to run in parallel
+and structure inputs/asserts of t.Fail instead as table-driven tests
+*/
 func FuzzInsertKeys(f *testing.F) {
 	tree := NewBTree(3)
 
