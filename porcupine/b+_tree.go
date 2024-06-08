@@ -17,7 +17,7 @@ const (
 	LEAF_NODE
 )
 
-var ErrDuplicateKey error = errors.New("duplicate key/value")
+// var ErrDuplicateKey error = errors.New("duplicate key/value")
 
 type BTree struct {
 	root *Node
@@ -63,7 +63,7 @@ func (t *BTree) Search(key int) ([]int, int, error) {
 	}
 }
 
-func (t *BTree) Insert(key int) error {
+func (t *BTree) Upsert(key int) error {
 	t.Lock()
 	defer t.Unlock()
 
@@ -74,15 +74,11 @@ func (t *BTree) Insert(key int) error {
 		t.nodeCount++
 		return nil
 	} else {
-		// find leaf node to insert into or root at first
+		// find leaf node to Upsert into or root at first
 		n, _, err := t.root.Search(key)
 
 		if n == nil {
 			return fmt.Errorf("leaf node not found: %v", err)
-		}
-
-		if err == nil {
-			return ErrDuplicateKey
 		}
 
 		t.nodeCount++
@@ -159,7 +155,6 @@ func (n *Node) SearchToDelete(key int) (*Node, int, error) {
 	return n.children[idx].SearchToDelete(key)
 }
 
-// TODO(bug): buggy - https://github.com/hailelagi/porcupine/actions/runs/9423498479/job/25962006765
 func (n *Node) insert(t *BTree, key int) error {
 	if n.kind == ROOT_NODE && len(n.children) == 0 {
 		n.data = findInsertAt(n.data, key)

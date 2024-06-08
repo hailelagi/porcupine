@@ -11,7 +11,7 @@ import (
 TODO: refactor these tests to run in parallel
 and structure inputs/asserts of t.Fail instead as table-driven tests
 */
-func FuzzInsertKeys(f *testing.F) {
+func FuzzUpsertKeys(f *testing.F) {
 	tree := NewBTree(3)
 
 	for key := 1; key < 10_000; key++ {
@@ -19,7 +19,7 @@ func FuzzInsertKeys(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, key int) {
-		tree.Insert(key)
+		tree.Upsert(key)
 		found := keyExists(tree, key)
 
 		if !found {
@@ -37,7 +37,7 @@ func FuzzSearchKeys(f *testing.F) {
 
 	f.Fuzz(func(t *testing.T, key int) {
 		var found bool
-		tree.Insert(key)
+		tree.Upsert(key)
 
 		data, _, err := tree.Search(key)
 
@@ -52,7 +52,7 @@ func FuzzSearchKeys(f *testing.F) {
 		}
 
 		if !found {
-			t.Errorf("did not find key inserted")
+			t.Errorf("did not find key Upserted")
 		}
 	})
 }
@@ -65,7 +65,7 @@ func FuzzDeleteKeys(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, key int) {
-		tree.Insert(key)
+		tree.Upsert(key)
 		err := tree.Delete(key)
 
 		if err != nil {
@@ -100,7 +100,7 @@ func TestBTreeSingleSplit(t *testing.T) {
 	elements := []int{5, 2, 1, 4}
 
 	for _, e := range elements {
-		tree.Insert(e)
+		tree.Upsert(e)
 	}
 
 	if slices.Compare(tree.root.keys, []int{2, 4}) != 0 {
@@ -125,7 +125,7 @@ func TestBTreeSingleSplitDegreeFive(t *testing.T) {
 	elements := []int{5, 2, 1, 4, 8, 9, 7}
 
 	for _, e := range elements {
-		tree.Insert(e)
+		tree.Upsert(e)
 	}
 
 	if slices.Compare(tree.root.keys, []int{4, 7}) != 0 {
@@ -150,7 +150,7 @@ func TestBTreeMultiSplit(t *testing.T) {
 	elements := []int{5, 2, 1, 4, 6, 7, 8, 3}
 
 	for _, e := range elements {
-		tree.Insert(e)
+		tree.Upsert(e)
 	}
 
 	if slices.Compare(tree.root.keys, []int{4, 6}) != 0 {
@@ -188,7 +188,7 @@ func TestBTreeMultiDelete(t *testing.T) {
 	elements := []int{5, 2, 1, 4, 6, 7, 8, 3}
 
 	for _, e := range elements {
-		tree.Insert(e)
+		tree.Upsert(e)
 	}
 
 	// deletion works slightly differently from how one
@@ -237,9 +237,9 @@ func BenchmarkBTree(b *testing.B) {
 	for i := 0; i <= 100_000; i++ {
 		key := i
 		// value := i * 10
-		err := tree.Insert(key)
+		err := tree.Upsert(key)
 		if err != nil {
-			b.Errorf("Error inserting key %d: %v", key, err)
+			b.Errorf("Error Upserting key %d: %v", key, err)
 		}
 	}
 
@@ -249,12 +249,10 @@ func BenchmarkBTree(b *testing.B) {
 		for i := 10_000; i < pb.N; i++ {
 			// value := i * 10
 			key := rand.Intn(100_000)
-			err := tree.Insert(key)
+			err := tree.Upsert(key)
 
-			if err == ErrDuplicateKey {
-				log.Print("warn duplicate insert")
-			} else if err != nil {
-				b.Errorf("Error inserting key %d: %v", i, err)
+			if err != nil {
+				b.Errorf("Error Upserting key %d: %v", i, err)
 			}
 		}
 	})
@@ -277,7 +275,7 @@ func BenchmarkBTree(b *testing.B) {
 	b.Run("read/write", func(pb *testing.B) {
 		for i := 0; i <= pb.N; i++ {
 			key := rand.Intn(100_000)
-			err := tree.Insert(key)
+			err := tree.Upsert(key)
 			n, idx, searchErr := tree.Search(key)
 
 			if searchErr != nil {
@@ -285,7 +283,7 @@ func BenchmarkBTree(b *testing.B) {
 			}
 
 			if err != nil {
-				b.Logf("warning inserting %d: %v", i, err)
+				b.Logf("warning Upserting %d: %v", i, err)
 			}
 		}
 	})
@@ -299,9 +297,9 @@ func BenchmarkBTreeConcurrentAccess(b *testing.B) {
 	for i := 0; i <= 100_000; i++ {
 		key := i
 		// value := i * 10
-		err := tree.Insert(key)
+		err := tree.Upsert(key)
 		if err != nil {
-			b.Errorf("Error inserting key %d: %v", key, err)
+			b.Errorf("Error Upserting key %d: %v", key, err)
 		}
 	}
 
@@ -325,9 +323,9 @@ func BenchmarkBTreeConcurrentWriter(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			key := rand.Intn(100_000)
-			err := tree.Insert(key)
+			err := tree.Upsert(key)
 			if err != nil {
-				b.Errorf("Error inserting key %d: %v", key, err)
+				b.Errorf("Error Upserting key %d: %v", key, err)
 			}
 		}
 	})
@@ -339,9 +337,9 @@ func BenchmarkBTreeIndexSampleRead(b *testing.B) {
 	for i := 0; i <= 1_000_000; i++ {
 		key := i
 		// value := i * 10
-		err := tree.Insert(key)
+		err := tree.Upsert(key)
 		if err != nil {
-			b.Errorf("Error inserting key %d: %v", key, err)
+			b.Errorf("Error Upserting key %d: %v", key, err)
 		}
 	}
 
@@ -365,9 +363,9 @@ func BenchmarkBTreeIndexSampleWrite(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			key := rand.Intn(1_000_000)
-			err := tree.Insert(key)
+			err := tree.Upsert(key)
 			if err != nil {
-				b.Errorf("Error inserting key %d: %v", key, err)
+				b.Errorf("Error Upserting key %d: %v", key, err)
 			}
 		}
 	})
