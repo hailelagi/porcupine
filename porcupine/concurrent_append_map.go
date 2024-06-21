@@ -11,6 +11,10 @@ type ConcurrentAppendMap struct {
 	Fields *sync.Map
 }
 
+func NewConcurrentAppendMap() *ConcurrentAppendMap {
+	return &ConcurrentAppendMap{Fields: &sync.Map{}}
+}
+
 func (c *ConcurrentAppendMap) Get(key string) int {
 	value, found := c.Fields.Load(key)
 	v, ok := value.(int)

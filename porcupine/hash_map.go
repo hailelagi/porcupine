@@ -10,6 +10,10 @@ type LockingMap[K string, V any] struct {
 	Fields map[K]V
 }
 
+func NewLockingMap() *LockingMap[string, int] {
+	return &LockingMap[string, int]{Fields: make(map[string]int)}
+}
+
 func (l *LockingMap[string, any]) Get(key string) (any, error) {
 	l.RLock()
 	defer l.RUnlock()
