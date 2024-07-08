@@ -19,6 +19,7 @@ porcupine graph
 
 ## what would be nice to do
 - a vanilla AVL Tree
+- A ring buffer ala postgres (https://www.interdb.jp/pg/pgsql08/05.html)
 - a vanilla red black tree
 - add an ART index
 - a CTrie  https://en.wikipedia.org/wiki/Ctrie
