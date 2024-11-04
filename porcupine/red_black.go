@@ -13,12 +13,10 @@ type RedBlack[key constraints.Ordered, value any] struct {
 }
 
 type RedBlackNode[key constraints.Ordered, value any] struct {
-	key   key
-	value value
-	color bool
-
-	left  *RedBlackNode[key, value]
-	right *RedBlackNode[key, value]
+	key         key
+	value       value
+	color       bool // if true then black, else red.
+	left, right *RedBlackNode[key, value]
 }
 
 func NewRedBlack() *RedBlack[int, int] {
