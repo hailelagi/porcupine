@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCounter(t *testing.T) {
@@ -15,9 +17,17 @@ func TestCounter(t *testing.T) {
 		testMap.Put("test-x", 2)
 		testMap.Put("test-y", 3)
 
-		assert(t, testMap, "test", 1)
-		assert(t, testMap, "test-x", 2)
-		assert(t, testMap, "test-y", 3)
+		val, err := testMap.Get("test")
+		assert.NoError(t, err)
+		assert.Equal(t, 1, val)
+
+		val, err = testMap.Get("test-x")
+		assert.NoError(t, err)
+		assert.Equal(t, 2, val)
+
+		val, err = testMap.Get("test-y")
+		assert.NoError(t, err)
+		assert.Equal(t, 3, val)
 	})
 
 	t.Run("it runs safely concurrently", func(t *testing.T) {
@@ -29,7 +39,11 @@ func TestCounter(t *testing.T) {
 
 		for i := 0; i < wantedCount; i++ {
 			go func(i int) {
+				val, err := testMap.Get("test-998")
 				k := fmt.Sprintf("test-%d", i)
+
+				assert.NoError(t, err)
+				assert.Equal(t, 998, val)
 
 				testMap.Put(k, i)
 				wg.Done()
@@ -37,13 +51,9 @@ func TestCounter(t *testing.T) {
 		}
 		wg.Wait()
 
-		assert(t, testMap, "test-998", 998)
-	})
-}
+		val, err := testMap.Get("test-998")
 
-func assert(t testing.TB, result *LockingMap[string, int], key string, want int) {
-	t.Helper()
-	if result.Fields[key] != want {
-		t.Fail()
-	}
+		assert.NoError(t, err)
+		assert.Equal(t, 998, val)
+	})
 }
