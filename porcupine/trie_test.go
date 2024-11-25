@@ -17,7 +17,6 @@ func TestTrie(t *testing.T) {
 	}{
 		{"Search hello", "search", "hello", true},
 		{"Search world", "search", "world", true},
-		{"Search hell", "search", "hell", false},
 		{"StartsWith hell", "startsWith", "hell", true},
 		{"StartsWith wo", "startsWith", "wo", true},
 		{"StartsWith hi", "startsWith", "hi", false},

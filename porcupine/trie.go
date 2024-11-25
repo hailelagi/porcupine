@@ -17,6 +17,7 @@ func NewTrie() *Trie {
 	}
 }
 
+// insert into the tree
 func (t *Trie) Insert(word string) {
 	current := t.root
 	for _, ch := range word {
@@ -30,6 +31,7 @@ func (t *Trie) Insert(word string) {
 	current.isEnd = true
 }
 
+// exact substring match
 func (t *Trie) Search(word string) bool {
 	current := t.root
 	for _, ch := range word {
@@ -42,6 +44,7 @@ func (t *Trie) Search(word string) bool {
 	return current.isEnd
 }
 
+// This is the prefix search
 func (t *Trie) StartsWith(prefix string) bool {
 	current := t.root
 	for _, ch := range prefix {
