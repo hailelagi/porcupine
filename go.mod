@@ -1,6 +1,6 @@
 module github.com/hailelagi/porcupine-go
 
-go 1.20
+go 1.23
 
 require (
 	github.com/spf13/cobra v1.6.1
