@@ -1,12 +1,22 @@
 package porcupine
 
-type RadixNode struct {
-	children map[rune]*RadixNode
-	isEnd    bool
-}
+/*
+TODO:
+most radix trees require to trade off tree height versus space efficiency
+by setting a globally valid fanout parameter ??
+
+TODO: implement the path collapsing/compression optimisation
+ Morrison introduced path compression in order to store long strings
+efficiently [16]. Knuth [17] analyzes these early trie variants
+*/
 
 type RadixTree struct {
 	root *RadixNode
+}
+
+type RadixNode struct {
+	children map[rune]*RadixNode
+	isEnd    bool
 }
 
 func NewRadixTree() *RadixTree {
