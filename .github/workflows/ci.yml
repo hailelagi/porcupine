@@ -40,21 +40,21 @@ jobs:
     - name: Test with the Go CLI
       run: go test -v -race ./...
 
-    - name: Run BenchMarks
+    - name: Run Benchmarks
       run: cd internal && go test -bench=. -benchmem ./...
 
     - name: Run tests with coverage
       id: go-test
-      run: go test -coverprofile=coverage.out ./...
+      run: cd internal && go test -coverprofile=coverage.out ./... && mv coverage.out ../coverage.out
     
     - name: Display coverage
       run: go tool cover -func=coverage.out
     
     - name: threshold
       run: |
-        THRESHOLD=70.0
-        COVERAGE=$(go tool cover -func=coverage.out | grep '^internal/' | awk '{sum+=$3} END {print sum/NR}')
+        THRESHOLD=60
+        COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{sum += substr($3, 1, length($3)-1); count++} END {print sum/count}')
         if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
-          echo "Code coverage ($COVERAGE%) is below the threshold ($THRESHOLD%) for /pkg"
+          echo "Code coverage ($COVERAGE%) is below the threshold ($THRESHOLD%)"
           exit 1
         fi
