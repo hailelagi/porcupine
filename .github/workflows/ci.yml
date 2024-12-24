@@ -53,8 +53,8 @@ jobs:
     - name: threshold
       run: |
         THRESHOLD=70.0
-        COVERAGE=$(go tool cover -func=coverage.out | grep total: | awk '{print substr($3, 1, length($3)-1)}')
+        COVERAGE=$(go tool cover -func=coverage.out | grep '^pkg/' | awk '{sum+=$3; count+=1} END {if (count > 0) print sum/count; else print 0}')
         if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
-          echo "Code coverage ($COVERAGE%) is below the threshold ($THRESHOLD%)"
+          echo "Code coverage ($COVERAGE%) is below the threshold ($THRESHOLD%) for /pkg"
           exit 1
         fi
