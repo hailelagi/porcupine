@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hailelagi/porcupine-go/api"
-	"github.com/hailelagi/porcupine-go/porcupine"
+	porcupine "github.com/hailelagi/porcupine-go/internal"
 	"github.com/spf13/cobra"
 )
 
