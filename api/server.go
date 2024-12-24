@@ -16,53 +16,36 @@ type HomeInfo struct {
 
 func Serve() {
 	http.HandleFunc("/configure", ConfigHandler)
-	http.HandleFunc("/get", getHandler)
-	http.HandleFunc("/ls", lsHandler)
-	http.HandleFunc("/set", setHandler)
-	http.HandleFunc("/rm", rmHandler)
-	http.HandleFunc("/line", plotHandler)
+	http.HandleFunc("/plot", plotHandler)
 	http.HandleFunc("/", homeHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func getHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Listening you are on: %s", r.URL.Path)
-}
-
-func lsHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Listening you are on: %s", r.URL.Path)
-}
-
-func setHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Listening you are on: %s", r.URL.Path)
-}
-
-func rmHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Listening you are on: %s", r.URL.Path)
-}
-
 func plotHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("./assets/line.html")
-
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
+	if err := renderTemplate(w, "./assets/line.html", nil); err != nil {
+		log.Printf("Failed to render template: %v", err)
+		http.Error(w, "Failed to render template", http.StatusInternalServerError)
 	}
-
-	tmpl.Execute(w, nil)
-	fmt.Fprintf(w, "Listening you are on: %s", r.URL.Path)
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("./assets/index.html")
-	//info := HomeInfo{"HashMap", true, []string{"8080", "8081"}}
 	info := HomeInfo{"HashMap", false, []string{}, "8080"}
+	if err := renderTemplate(w, "./assets/index.html", info); err != nil {
+		log.Printf("Failed to render template: %v", err)
+		http.Error(w, "Failed to render template", http.StatusInternalServerError)
+	}
+}
 
+func renderTemplate(w http.ResponseWriter, filepath string, data interface{}) error {
+	tmpl, err := template.ParseFiles(filepath)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
+		return fmt.Errorf("failed to parse template: %w", err)
 	}
 
-	tmpl.Execute(w, info)
+	if err := tmpl.Execute(w, data); err != nil {
+		return fmt.Errorf("failed to execute template: %w", err)
+	}
+
+	return nil
 }
