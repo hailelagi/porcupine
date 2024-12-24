@@ -7,17 +7,14 @@ import (
 )
 
 func Config(storeName string) {
-	// todo: load from config
-	// host := HOSTNAME
-	// port := PORT
-
 	uri := fmt.Sprintf("http://localhost:8080?configure=%s", storeName)
 	resp, err := http.Get(uri)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("Failed to configure store %s: %v", storeName, err)
+		return
 	}
+	defer resp.Body.Close()
 
 	fmt.Println("Response status:", resp.Status)
-	defer resp.Body.Close()
 }
