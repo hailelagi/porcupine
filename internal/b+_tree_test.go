@@ -19,10 +19,10 @@ func FuzzUpsertKeys(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, key int) {
-		tree.Upsert(key)
+		err := tree.Upsert(key)
 		found := keyExists(tree, key)
 
-		if !found {
+		if !found || err != nil {
 			t.Errorf("not found %v", key)
 		}
 	})
@@ -37,7 +37,11 @@ func FuzzSearchKeys(f *testing.F) {
 
 	f.Fuzz(func(t *testing.T, key int) {
 		var found bool
-		tree.Upsert(key)
+		err := tree.Upsert(key)
+
+		if err != nil {
+			t.Errorf("could not insert into tree %v", err)
+		}
 
 		data, _, err := tree.Search(key)
 
@@ -65,8 +69,13 @@ func FuzzDeleteKeys(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, key int) {
-		tree.Upsert(key)
-		err := tree.Delete(key)
+		err := tree.Upsert(key)
+
+		if err != nil {
+			t.Errorf("could not insert into tree %v", err)
+		}
+
+		err = tree.Delete(key)
 
 		if err != nil {
 			t.Errorf("deletion errored %v", err)
@@ -100,7 +109,7 @@ func TestBTreeSingleSplit(t *testing.T) {
 	elements := []int{5, 2, 1, 4}
 
 	for _, e := range elements {
-		tree.Upsert(e)
+		_ = tree.Upsert(e)
 	}
 
 	if slices.Compare(tree.root.keys, []int{2, 4}) != 0 {
@@ -125,7 +134,7 @@ func TestBTreeSingleSplitDegreeFive(t *testing.T) {
 	elements := []int{5, 2, 1, 4, 8, 9, 7}
 
 	for _, e := range elements {
-		tree.Upsert(e)
+		_ = tree.Upsert(e)
 	}
 
 	if slices.Compare(tree.root.keys, []int{4, 7}) != 0 {
@@ -150,7 +159,7 @@ func TestBTreeMultiSplit(t *testing.T) {
 	elements := []int{5, 2, 1, 4, 6, 7, 8, 3}
 
 	for _, e := range elements {
-		tree.Upsert(e)
+		_ = tree.Upsert(e)
 	}
 
 	if slices.Compare(tree.root.keys, []int{4, 6}) != 0 {
@@ -188,14 +197,14 @@ func TestBTreeMultiDelete(t *testing.T) {
 	elements := []int{5, 2, 1, 4, 6, 7, 8, 3}
 
 	for _, e := range elements {
-		tree.Upsert(e)
+		_ = tree.Upsert(e)
 	}
 
 	// deletion works slightly differently from how one
 	// would expect a b-tree to merge.
 	// it prefers the leftmost neighbour and doesn't steal.
 
-	tree.Delete(5)
+	_ = tree.Delete(5)
 
 	if slices.Compare(tree.root.keys, []int{4, 6}) != 0 {
 		t.Fail()
